@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sahyadri-Samrakshane Live App</title>
+  <style>
+    :root {
+      --forest: #1f6b3a;
+      --deep: #123322;
+      --leaf: #dfead6;
+      --earth: #8a5a2b;
+      --soil: #5a3b22;
+      --mist: #f5f0e6;
+      --paper: #fffdf7;
+      --ink: #19251b;
+      --muted: #657260;
+      --danger: #b3261e;
+      --warning: #ffe1a8;
+      --ok: #cfe8bf;
+      --info: #c6e4dd;
+      --line: #d5decf;
+      --shadow: 0 16px 40px rgba(18, 51, 34, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(18, 51, 34, .2), rgba(18, 51, 34, .08)),
+        radial-gradient(circle at 10% 0%, rgba(31, 107, 58, .18), transparent 34%),
+        var(--mist);
+      min-height: 100vh;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 8px;
+      min-height: 42px;
+      font-weight: 700;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .hidden { display: none !important; }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .login-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: min(460px, 100%);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      margin-bottom: 18px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    .brand p, .muted {
+      color: var(--muted);
+      margin: 5px 0 0;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 700;
+      color: var(--deep);
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #bbc8b4;
+      background: white;
+      border-radius: 8px;
+      padding: 11px 12px;
+      color: var(--ink);
+      outline-color: var(--forest);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .primary {
+      background: var(--forest);
+      color: white;
+      padding: 0 15px;
+    }
+
+    .secondary {
+      background: var(--leaf);
+      color: var(--deep);
+      padding: 0 15px;
+      border: 1px solid #bed0b5;
+    }
+
+    .danger-text {
+      color: var(--danger);
+      margin-top: 10px;
+      min-height: 22px;
+      font-weight: 700;
+    }
+
+    .topbar {
+      background: var(--deep);
+      color: white;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: #dce8d2;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--leaf);
+      color: var(--deep);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .nav button {
+      background: var(--paper);
+      color: var(--deep);
+      border: 1px solid var(--line);
+    }
+
+    .nav button.active {
+      background: var(--forest);
+      color: white;
+      border-color: var(--forest);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(18, 51, 34, .06);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      color: var(--deep);
+      font-size: 21px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .type-btn {
+      background: #f7faf3;
+      color: var(--deep);
+      border: 1px solid #c8d8bf;
+      text-align: left;
+      padding: 12px;
+    }
+
+    .type-btn.active {
+      background: var(--leaf);
+      border-color: var(--forest);
+      box-shadow: inset 4px 0 0 var(--forest);
+    }
+
+    .camera-box {
+      height: 300px;
+      background:
+        linear-gradient(160deg, rgba(18, 51, 34, .72), rgba(31, 107, 58, .52)),
+        repeating-linear-gradient(120deg, #274d34 0 16px, #315d3f 16px 32px);
+      border-radius: 8px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: white;
+      border: 1px solid #9fb294;
+      position: relative;
+    }
+
+    .camera-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-placeholder {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .camera-placeholder strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: var(--leaf);
+      border-radius: 8px;
+      padding: 13px;
+      text-align: center;
+      border: 1px solid #bed0b5;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      color: var(--deep);
+    }
+
+    .alert-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .alert-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: white;
+    }
+
+    .alert-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .reported { background: var(--warning); }
+    .verified { background: var(--ok); }
+    .dispatched { background: var(--info); }
+
+    .sync {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .alert-photo {
+      width: 100%;
+      max-height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 9px;
+      border: 1px solid var(--line);
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .tip {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--deep);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      max-width: 340px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: .2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .layout, .tips, .grid-two, .status-row {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="loginScreen" class="login-wrap">
+    <div class="login-card">
+      <div class="brand">
+        <h1>Sahyadri-Samrakshane</h1>
+        <p>Forest Sentinel live app demo</p>
+      </div>
+      <label for="email">Email</label>
+      <input id="email" type="email" value="abhishektm.22ece@cambridge.edu.in" autocomplete="username">
+      <label for="password">Password</label>
+      <input id="password" type="password" value="abhi@2003" autocomplete="current-password">
+      <div id="loginError" class="danger-text"></div>
+      <button class="primary" id="loginBtn" type="button" style="width:100%">Login</button>
+      <p class="muted">Wrong credentials trigger an owner alert message.</p>
+    </div>
+  </section>
+
+  <main id="appScreen" class="shell hidden">
+    <header class="topbar">
+      <div>
+        <h1>Forest Sentinel</h1>
+        <p>GPS-tagged ecological alerts for the Western Ghats</p>
+      </div>
+      <div class="actions">
+        <span id="queuePill" class="pill">0 queued</span>
+        <button id="networkBtn" class="secondary" type="button">Network: Online</button>
+      </div>
+    </header>
+
+    <nav class="nav" aria-label="App tabs">
+      <button id="tabReport" class="active" type="button">Report</button>
+      <button id="tabDashboard" type="button">Dashboard</button>
+      <button id="tabEducation" type="button">Education</button>
+    </nav>
+
+    <section id="reportView" class="layout">
+      <div class="card">
+        <h2>Report Ecological Alert</h2>
+        <p class="muted">Select alert type, lock GPS, attach photo evidence, and submit.</p>
+        <div id="typeButtons" class="grid-two" style="margin-top:12px"></div>
+        <label for="note">Short note for forest department</label>
+        <textarea id="note">Smoke seen near trekking path.</textarea>
+        <div class="actions">
+          <button id="gpsBtn" class="secondary" type="button">GPS Lock</button>
+          <button id="captureBtn" class="primary" type="button">Capture Photo</button>
+          <button id="submitBtn" class="primary" type="button">Submit Alert</button>
+        </div>
+        <input id="photoInput" class="file-input" type="file" accept="image/*">
+      </div>
+
+      <aside class="card">
+        <h2>Live Evidence</h2>
+        <div id="cameraBox" class="camera-box">
+          <div class="camera-placeholder">
+            <strong>CameraX Preview</strong>
+            <span>Use Capture Photo to attach an image for the demo.</span>
+          </div>
+        </div>
+        <p id="gpsText" class="muted" style="margin-top:12px">GPS: not locked yet</p>
+        <p class="muted">Browser demo uses real geolocation when allowed, otherwise a Western Ghats sample coordinate.</p>
+      </aside>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <div class="card">
+        <h2>Mock Firebase Dashboard</h2>
+        <div class="status-row">
+          <div class="metric"><strong id="totalMetric">0</strong>Total</div>
+          <div class="metric"><strong id="queuedMetric">0</strong>Queued</div>
+          <div class="metric"><strong id="dispatchMetric">0</strong>Dispatched</div>
+        </div>
+        <div class="actions">
+          <button id="syncBtn" class="primary" type="button">Sync Mock Firebase Dashboard</button>
+          <button id="seedBtn" class="secondary" type="button">Add Sample Alert</button>
+        </div>
+        <div id="alertList" class="alert-list"></div>
+      </div>
+    </section>
+
+    <section id="educationView" class="hidden">
+      <div class="card">
+        <h2>Eco-Sensitive Zone Tips</h2>
+        <div id="tips" class="tips"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const ownerEmail = "abhishektm.22ece@cambridge.edu.in";
+    const ownerPassword = "abhi@2003";
+    const alertTypes = ["Forest Fire", "Landslide", "Illegal Tree Cutting", "Wildlife Sighting"];
+    const statuses = ["Reported", "Verified", "Team Dispatched"];
+    const tips = [
+      "Do not enter active fire, landslide, or elephant movement zones. Report from a safe distance.",
+      "Avoid plastic, loud music, campfires, and soap use near streams in eco-sensitive forests.",
+      "Stay on marked trekking paths to prevent erosion and damage to native plant habitats.",
+      "Never share exact wildlife locations publicly; send them only to authorized forest staff.",
+      "During monsoon, report fresh cracks, rolling stones, blocked drains, or slope failures early.",
+      "Photograph evidence without touching cut trees, snares, nests, or animal tracks."
+    ];
+
+    let selectedType = alertTypes[0];
+    let online = true;
+    let photoData = "";
+    let gps = null;
+    let alerts = JSON.parse(localStorage.getItem("sahyadri-live-alerts") || "[]");
+
+    const $ = (id) => document.getElementById(id);
+
+    function save() {
+      localStorage.setItem("sahyadri-live-alerts", JSON.stringify(alerts));
+    }
+
+    function showToast(message) {
+      $("toast").textContent = message;
+      $("toast").classList.add("show");
+      setTimeout(() => $("toast").classList.remove("show"), 2600);
+    }
+
+    function renderTypes() {
+      $("typeButtons").innerHTML = alertTypes.map(type => `
+        <button type="button" class="type-btn ${type === selectedType ? "active" : ""}" data-type="${type}">
+          ${type}
+        </button>
+      `).join("");
+      document.querySelectorAll("[data-type]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedType = btn.dataset.type;
+          renderTypes();
+        });
+      });
+    }
+
+    function renderTips() {
+      $("tips").innerHTML = tips.map(tip => `<div class="tip">${tip}</div>`).join("");
+    }
+
+    function renderDashboard() {
+      const queued = alerts.filter(a => !a.synced).length;
+      const dispatched = alerts.filter(a => a.status === "Team Dispatched").length;
+      $("queuePill").textContent = `${queued} queued`;
+      $("totalMetric").textContent = alerts.length;
+      $("queuedMetric").textContent = queued;
+      $("dispatchMetric").textContent = dispatched;
+
+      if (!alerts.length) {
+        $("alertList").innerHTML = `<div class="alert-card">No alerts yet. Submit one from the Report tab.</div>`;
+        return;
+      }
+
+      $("alertList").innerHTML = alerts.slice().reverse().map(alert => {
+        const badgeClass = alert.status === "Reported" ? "reported" : alert.status === "Verified" ? "verified" : "dispatched";
+        const photo = alert.photo ? `<img class="alert-photo" src="${alert.photo}" alt="Alert evidence photo">` : "";
+        return `
+          <article class="alert-card">
+            <div class="alert-head">
+              <div>
+                <strong>${alert.type}</strong>
+                <p class="muted">${new Date(alert.createdAt).toLocaleString()}</p>
+              </div>
+              <div>
+                <span class="badge ${badgeClass}">${alert.status}</span>
+                <div class="sync">${alert.synced ? "Synced" : "Offline queue"}</div>
+              </div>
+            </div>
+            <p><strong>GPS:</strong> ${alert.lat.toFixed(6)}, ${alert.lng.toFixed(6)} | +/- ${alert.accuracy.toFixed(1)} m</p>
+            <p>${alert.note}</p>
+            ${photo}
+            <div class="actions">
+              <button class="secondary" type="button" data-advance="${alert.id}">Advance Status</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll("[data-advance]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const alert = alerts.find(item => item.id === btn.dataset.advance);
+          const index = statuses.indexOf(alert.status);
+          alert.status = statuses[Math.min(index + 1, statuses.length - 1)];
+          alert.synced = online;
+          save();
+          renderDashboard();
+          showToast(`Status updated to ${alert.status}`);
+        });
+      });
+    }
+
+    function setTab(tab) {
+      ["Report", "Dashboard", "Education"].forEach(name => {
+        $(`tab${name}`).classList.toggle("active", tab === name);
+        $(`${name.toLowerCase()}View`).classList.toggle("hidden", tab !== name);
+      });
+      if (tab === "Dashboard") renderDashboard();
+    }
+
+    function fallbackGps() {
+      return {
+        lat: 13.3409 + Math.random() / 100,
+        lng: 75.7754 + Math.random() / 100,
+        accuracy: 8 + Math.random() * 5
+      };
+    }
+
+    function setGps(point) {
+      gps = point;
+      $("gpsText").textContent = `GPS: ${gps.lat.toFixed(6)}, ${gps.lng.toFixed(6)} | +/- ${gps.accuracy.toFixed(1)} m`;
+    }
+
+    function syncIfOnline() {
+      if (!online) return;
+      alerts = alerts.map(alert => ({ ...alert, synced: true }));
+      save();
+      renderDashboard();
+    }
+
+    $("loginBtn").addEventListener("click", () => {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      if (email.toLowerCase() === ownerEmail.toLowerCase() && password === ownerPassword) {
+        $("loginScreen").classList.add("hidden");
+        $("appScreen").classList.remove("hidden");
+        renderDashboard();
+        showToast("Login successful");
+      } else {
+        $("loginError").textContent = `Wrong credentials. Owner alert prepared for ${ownerEmail}.`;
+        const body = encodeURIComponent(`Wrong login attempt in Sahyadri-Samrakshane.\n\nAttempted email: ${email || "empty email"}\nPassword hidden for safety.`);
+        window.location.href = `mailto:${ownerEmail}?subject=Sahyadri-Samrakshane wrong login attempt&body=${body}`;
+      }
+    });
+
+    $("gpsBtn").addEventListener("click", () => {
+      $("gpsText").textContent = "Requesting high accuracy GPS...";
+      if (!navigator.geolocation) {
+        setGps(fallbackGps());
+        showToast("Browser GPS unavailable. Demo coordinate used.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          setGps({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy || 10
+          });
+          showToast("GPS locked");
+        },
+        () => {
+          setGps(fallbackGps());
+          showToast("GPS permission denied or unavailable. Demo coordinate used.");
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    });
+
+    $("captureBtn").addEventListener("click", () => $("photoInput").click());
+
+    $("photoInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        photoData = reader.result;
+        $("cameraBox").innerHTML = `<img src="${photoData}" alt="Captured ecological evidence">`;
+        if (!gps) setGps(fallbackGps());
+        showToast("Photo attached and GPS refreshed");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    $("submitBtn").addEventListener("click", () => {
+      if (!gps) setGps(fallbackGps());
+      const alert = {
+        id: `SG-${Date.now()}`,
+        type: selectedType,
+        status: "Reported",
+        lat: gps.lat,
+        lng: gps.lng,
+        accuracy: gps.accuracy,
+        photo: photoData,
+        note: $("note").value.trim() || "Citizen report submitted from Sahyadri-Samrakshane.",
+        createdAt: Date.now(),
+        synced: online
+      };
+      alerts.push(alert);
+      save();
+      renderDashboard();
+      $("note").value = "";
+      photoData = "";
+      $("cameraBox").innerHTML = `<div class="camera-placeholder"><strong>CameraX Preview</strong><span>Use Capture Photo to attach an image for the demo.</span></div>`;
+      showToast(online ? "Alert submitted and synced" : "Alert cached in offline queue");
+    });
+
+    $("networkBtn").addEventListener("click", () => {
+      online = !online;
+      $("networkBtn").textContent = `Network: ${online ? "Online" : "Offline"}`;
+      $("networkBtn").className = online ? "secondary" : "primary";
+      if (online) {
+        syncIfOnline();
+        showToast("Network restored. Queued alerts synced.");
+      } else {
+        showToast("Network offline. New reports will be cached.");
+      }
+    });
+
+    $("syncBtn").addEventListener("click", () => {
+      if (!online) {
+        showToast("Still offline. Turn network online first.");
+        return;
+      }
+      syncIfOnline();
+      showToast("Mock Firebase dashboard synced");
+    });
+
+    $("seedBtn").addEventListener("click", () => {
+      const point = fallbackGps();
+      alerts.push({
+        id: `SG-${Date.now()}`,
+        type: "Landslide",
+        status: "Reported",
+        lat: point.lat,
+        lng: point.lng,
+        accuracy: point.accuracy,
+        photo: "",
+        note: "Fresh mudslide reported near ghat road bend.",
+        createdAt: Date.now(),
+        synced: online
+      });
+      save();
+      renderDashboard();
+      showToast("Sample alert added");
+    });
+
+    $("tabReport").addEventListener("click", () => setTab("Report"));
+    $("tabDashboard").addEventListener("click", () => setTab("Dashboard"));
+    $("tabEducation").addEventListener("click", () => setTab("Education"));
+
+    renderTypes();
+    renderTips();
+    renderDashboard();
+  </script>
+</body>
+</html>
